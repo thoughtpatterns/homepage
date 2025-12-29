@@ -1,0 +1,51 @@
+#!/usr/bin/env -S dash -eu
+
+# Cache our homepage's index, so that it loads instantly and works offline.
+
+readonly rootd="${0%/*}/../src/root"
+readonly htmld="${0%/*}/../src/html"
+
+readonly index="$rootd/index.html"
+readonly image="$rootd/lysf-256x256.png"
+
+escape()
+{
+	sed -e 's/\\/\\\\/g' -e 's/`/\\`/g' -e 's/\$/\\$/g'
+}
+
+js()
+{
+	printf '%s\n' 'const html = `'
+
+	mawk -v "base64=$(base64 "$image" | tr -d '\n')" -v "image=${image##*/}" '{
+		sub("src=\"./" image "\"", "src=\"data:image/png;base64," base64 "\"")
+		print
+	}' "$index" | escape
+
+	cat <<- "EOF"
+		`
+
+		self.addEventListener("install", (_) => {
+		  self.skipWaiting();
+		});
+
+		self.addEventListener("activate", (event) => {
+		  event.waitUntil(clients.claim());
+		});
+
+		self.addEventListener("fetch", (event) => {
+		  const url = new URL(event.request.url);
+		  if (url.pathname.endsWith("/") || url.pathname.endsWith("/index.html")) {
+		    event.respondWith(new Response(html, {
+		        headers: { "Content-Type": "text/html; charset=utf-8" },
+		      }));
+		    return;
+		  }
+		});
+	EOF
+}
+
+mkdir -p "$htmld"
+cp "$index" "$htmld"
+cp "$image" "$htmld"
+js > "$htmld/service-worker.js"

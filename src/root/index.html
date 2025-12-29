@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --black: #262626;
+      --white: #dddddd;
+    }
+    body {
+      background-color: var(--black);
+      color: var(--white);
+      font-family: "Courier New", "Courier", "monospace";
+    }
+    #center {
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translateX(-50%) translateY(-50%)
+    }
+    #center > p {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+  <title>homepage</title>
+</head>
+<body>
+  <div id="center">
+    <img src="./lysf-256x256.png">
+    <p>. . . !</p>
+  </div>
+  <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js")
+      .catch(e => console.error("service worker registration failed:", e));
+  }
+  </script>
+</body>
+</html>
