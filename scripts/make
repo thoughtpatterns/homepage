@@ -7,6 +7,7 @@ readonly htmld="${0%/*}/../src/html"
 
 readonly index="$rootd/index.html"
 readonly image="$rootd/lysf-256x256.png"
+readonly favicon="$rootd/favicon.ico"
 
 escape()
 {
@@ -48,4 +49,5 @@ js()
 mkdir -p "$htmld"
 cp "$index" "$htmld"
 cp "$image" "$htmld"
+cp "$favicon" "$htmld"
 js > "$htmld/service-worker.js"
