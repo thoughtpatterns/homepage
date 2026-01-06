@@ -25,7 +25,7 @@
           ];
 
           shellHook = ''
-            export PATH="$(realpath ./scripts):$PATH"
+            export PATH="$(realpath ./bin):$PATH"
           '';
         };
       }
